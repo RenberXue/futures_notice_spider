@@ -10,7 +10,7 @@ def filter_last_3_days(data: List[Dict]) -> List[Dict]:
     three_days_ago = today - timedelta(days=3)
     return [item for item in data if three_days_ago <= datetime.strptime(item["date"], "%Y/%m/%d").date() <= today]
 
-def filter_latest_10(data: List[Dict]) -> List[Dict]:
-    # 先按日期降序，再取前10
+def filter_latest_5(data: List[Dict]) -> List[Dict]:
+    # 先按日期降序，再取前5
     sorted_list = sorted(data, key=lambda x: x["date"], reverse=True)
-    return sorted_list[:10]
+    return sorted_list[:5]

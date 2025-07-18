@@ -11,10 +11,11 @@ This project is a Python-based web crawler that uses Playwright to scrape daily 
 ## Features
 
 - Fetch announcements' title, URL, and date from each exchange website
-- Supports filtering announcements by:
+- Supports retry on failed crawling (`safe_crawl`).
+- Filtering announcements by:
   - Daily announcements
   - Announcements from the past 3 days
-  - Latest 10 announcements
+  - Latest 5 announcements
 - Sends filtered reports via Feishu Bot or email
 - Configurable via environment variables (support `.env` files)
 - Scheduled daily execution using GitHub Actions

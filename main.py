@@ -6,8 +6,9 @@ from crawler.shfe import ShfeCrawler
 from crawler.cffex import CffexCrawler
 from notifier.feishu import FeishuNotifier
 from notifier.email import EmailNotifier
-from utils.formatter import format_feishu_message
-from utils.filters import filter_today, filter_last_3_days, filter_latest_10
+from utils.formatter import format_feishu_message, mark_sensitive
+from utils.filters import filter_today, filter_last_3_days, filter_latest_5
+from utils.safe_crawl import safe_crawl
 
 CRAWLERS = {
     "大商所": DceCrawler,
@@ -25,15 +26,19 @@ def run_crawlers():
             "AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/122.0.0.0 Safari/537.36"
         ))
+        context.set_default_timeout(40000)
+
         for name, CrawlerClass in CRAWLERS.items():
             page = context.new_page()
             crawler = CrawlerClass(page)
+
             try:
-                data = crawler.crawl()
+                data = safe_crawl(name, crawler, retries=3, delay=5)
             except Exception as e:
                 print(f"{name} 爬取失败: {e}")
                 data = []
-            results[name] = data
+            marked_data = mark_sensitive(data)
+            results[name] = marked_data
             page.close()
         browser.close()
     return results
@@ -76,11 +81,11 @@ def send_notifications(filtered_data, config):
     feishu.send_message(msg_3d)
     email.send_email("近3天公告", msg_3d)
 
-    # 3. 最新10条公告
-    latest10_data = {ex: filter_latest_10(data) for ex, data in filtered_data.items()}
-    msg_10 = format_feishu_message(latest10_data, "最新10条公告")
-    feishu.send_message(msg_10)
-    email.send_email("最新10条公告", msg_10)
+    # 3. 最新5条公告
+    latest5_data = {ex: filter_latest_5(data) for ex, data in filtered_data.items()}
+    msg_5 = format_feishu_message(latest5_data, "最新5条公告")
+    feishu.send_message(msg_5)
+    email.send_email("最新5条公告", msg_5)
 
 def load_config():
 

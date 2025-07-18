@@ -2,7 +2,7 @@ from crawler.base import BaseCrawler
 
 class CzceCrawler(BaseCrawler):
     def crawl(self):
-        self.page.goto("http://app.czce.com.cn/cms/pub/search/searchdtnew.jsp?channelcode=H770103")
+        self.page.goto("http://app.czce.com.cn/cms/pub/search/searchdt.jsp?channelcode=H770103")
         self.page.wait_for_selector("td.xxgktit")
 
         rows = self.page.query_selector_all("tr")
