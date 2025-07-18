@@ -1,5 +1,6 @@
 from typing import Dict, List
 from datetime import datetime
+import pytz
 
 SENSITIVE_KEYWORDS = [
     "系统升级", "系统维护", "技术调整", "规则修订", "服务器迁移", "证书更新", "网络调整",
@@ -26,8 +27,9 @@ def format_feishu_message(data: Dict[str, List[Dict]], filter_name: str) -> str:
     has_ann = [k for k,v in data.items() if len(v) > 0]
     no_ann = [k for k,v in data.items() if len(v) == 0]
 
-    currenttime = datetime.now().strftime("%Y/%m/%d %H:%M")
-    msg = f"{filter_name}：[{currenttime}]\n\n"
+    tz = pytz.timezone("Asia/Shanghai")
+    currenttime = datetime.now(tz).strftime("%Y/%m/%d %H:%M")
+    msg = f"期货交易所{filter_name}：[{currenttime}]\n\n"
 
     if has_ann:
         msg += "以下交易所有公告：\n"

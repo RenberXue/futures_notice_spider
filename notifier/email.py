@@ -23,11 +23,13 @@ class EmailNotifier:
                 with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port) as smtp:
                     smtp.login(self.username, self.password)
                     smtp.sendmail(self.sender, self.receivers, message.as_string())
+                    smtp.quit()
             else:
                 with smtplib.SMTP(self.smtp_host, self.smtp_port) as smtp:
                     smtp.ehlo()
                     smtp.starttls()
                     smtp.login(self.username, self.password)
                     smtp.sendmail(self.sender, self.receivers, message.as_string())
+                    smtp.quit()
         except Exception as e:
             print(f'[Email send error] {type(e).__name__}: {e}')
