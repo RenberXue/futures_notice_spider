@@ -6,7 +6,7 @@ from crawler.shfe import ShfeCrawler
 from crawler.cffex import CffexCrawler
 from notifier.feishu import FeishuNotifier
 from notifier.email import EmailNotifier
-from utils.formatter import format_feishu_message, mark_sensitive
+from utils.formatter import format_feishu_message, mark_sensitive, currenttime
 from utils.filters import filter_today, filter_last_3_days, filter_latest_5
 from utils.safe_crawl import safe_crawl
 
@@ -72,20 +72,20 @@ def send_notifications(filtered_data, config):
     # 1. 今日公告
     today_data = {ex: filter_today(data) for ex, data in filtered_data.items()}
     msg_today = format_feishu_message(today_data, "今日公告")
-    feishu.send_message(msg_today)
-    email.send_email("今日公告", msg_today)
+    # feishu.send_message(msg_today)
+    email.send_email(f"各期货交易所今日公告：[{currenttime()}]", msg_today)
 
     # 2. 近3天公告
     last3_data = {ex: filter_last_3_days(data) for ex, data in filtered_data.items()}
     msg_3d = format_feishu_message(last3_data, "近3天公告")
-    feishu.send_message(msg_3d)
-    email.send_email("近3天公告", msg_3d)
+    # feishu.send_message(msg_3d)
+    email.send_email(f"各期货交易所近3天公告：[{currenttime()}]", msg_3d)
 
     # 3. 最新5条公告
     latest5_data = {ex: filter_latest_5(data) for ex, data in filtered_data.items()}
     msg_5 = format_feishu_message(latest5_data, "最新5条公告")
-    feishu.send_message(msg_5)
-    email.send_email("最新5条公告", msg_5)
+    # feishu.send_message(msg_5)
+    email.send_email(f"各期货交易所最新5条公告：[{currenttime()}]", msg_5)
 
 def load_config():
 

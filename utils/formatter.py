@@ -16,6 +16,11 @@ def format_date(date_str: str) -> str:
             continue
     return date_str
 
+def currenttime():
+    tz = pytz.timezone("Asia/Shanghai")
+    currenttime = datetime.now(tz).strftime("%Y/%m/%d %H:%M")
+    return currenttime
+
 def mark_sensitive(data: List[Dict[str, str]]) -> List[Dict[str, str]]:
     for item in data:
         content = item.get("title", "") + item.get("link", "")
@@ -27,9 +32,7 @@ def format_feishu_message(data: Dict[str, List[Dict]], filter_name: str) -> str:
     has_ann = [k for k,v in data.items() if len(v) > 0]
     no_ann = [k for k,v in data.items() if len(v) == 0]
 
-    tz = pytz.timezone("Asia/Shanghai")
-    currenttime = datetime.now(tz).strftime("%Y/%m/%d %H:%M")
-    msg = f"期货交易所{filter_name}：[{currenttime}]\n\n"
+    msg = f"各期货交易所{filter_name}：[{currenttime()}]\n\n"
 
     if has_ann:
         msg += "以下交易所有公告：\n"
@@ -43,7 +46,7 @@ def format_feishu_message(data: Dict[str, List[Dict]], filter_name: str) -> str:
     for ex in has_ann:
         ann_list = data[ex]
         ann_list = sorted(ann_list, key=lambda x: x["date"], reverse=True)
-        msg += f"\n以下是{ex}截至{currenttime}的{filter_name}：\n"
+        msg += f"\n以下是{ex}截至{currenttime()}的{filter_name}：\n"
 
         for i, ann in enumerate(ann_list, 1):
             title = ann["title"]
